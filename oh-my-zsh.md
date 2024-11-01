@@ -13,3 +13,9 @@
     git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
     ```
 -In ~/.zshrc plugins=(git zsh-syntax-highlighting zsh-autosuggestions)
+
+- Install p10k
+  ```
+  git clone --recursive https://github.com/romkatv/powerlevel10k.git $HOME/.oh-my-zsh/themes/powerlevel10k
+  ```
+  ZSH_THEME="powerlevel10k/powerlevel10k"

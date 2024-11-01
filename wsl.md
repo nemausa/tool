@@ -17,7 +17,7 @@
    ```bash
    export DISPLAY=localhost:0
    ```
-   如果你使用的是 Xming，可以尝试：
+   - 如果你使用的是 Xming，可以尝试：
    ```bash
    export DISPLAY=$(ip route | grep default | awk '{print $3}'):0
    ```

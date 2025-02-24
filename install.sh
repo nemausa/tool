@@ -1,6 +1,6 @@
-
 sudo add-apt-repository -y ppa:neovim-ppa/unstable
 sudo apt-get install -y software-properties-common
+sudo add-apt-repository -y ppa:git-core/ppa
 sudo apt-get update
 sudo apt install -y git
 git --version

@@ -9,6 +9,9 @@ zsh --version
 chsh -s $(which zsh)
 echo $SHELL
 
+sudo apt install -y clang-format
+sudo apt install -y curl 
+
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 git clone https://github.com/zsh-users/zsh-autosuggestions.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
@@ -22,6 +25,7 @@ sed -i 's/^plugins=(.*/plugins=(git zsh-autosuggestions zsh-syntax-highlighting 
 
 sudo apt-get install -y python3 python3-pip
 pip3 install --user pynvim
+
 
 sudo apt install -y clangd make cmake 
 curl -fsSL https://deb.nodesource.com/setup_23.x | sudo -E bash -

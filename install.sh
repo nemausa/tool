@@ -11,6 +11,8 @@ echo $SHELL
 
 sudo apt install -y clang-format
 sudo apt install -y curl 
+sudo apt install -y openssh-server
+sudo apt install -y vim
 
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 git clone https://github.com/zsh-users/zsh-autosuggestions.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions

@@ -1,3 +1,4 @@
+ export https_proxy=http://192.168.110.142:10808;export http_proxy=http://192.168.110.142:10808;export all_proxy=socks5://192.168.110.142
 sudo add-apt-repository -y ppa:neovim-ppa/unstable
 sudo apt-get install -y software-properties-common
 sudo add-apt-repository -y ppa:git-core/ppa
@@ -16,6 +17,8 @@ sudo apt install -y vim
 sudo apt install -y clang-format
 sudo apt install -y ctags
 sudo apt-get install unzip
+sudo apt install -y tmux
+wget https://raw.githubusercontent.com/nemausa/tool/refs/heads/main/.tmux.conf ~/.tmux.conf
 
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 git clone https://github.com/zsh-users/zsh-autosuggestions.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions

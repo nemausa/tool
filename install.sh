@@ -16,7 +16,7 @@ sudo apt install -y openssh-server
 sudo apt install -y vim
 sudo apt install -y clang-format
 sudo apt install -y ctags
-sudo apt-get install unzip
+sudo apt-get install unzip gdb
 sudo apt install -y tmux
 wget https://raw.githubusercontent.com/nemausa/tool/refs/heads/main/.tmux.conf ~/.tmux.conf
 

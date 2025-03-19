@@ -18,6 +18,7 @@ sudo apt install -y clang-format
 sudo apt install -y ctags
 sudo apt-get install unzip gdb
 pip install debugpy
+sudo apt install xsel  xclip
 sudo apt install -y tmux
 wget https://raw.githubusercontent.com/nemausa/tool/refs/heads/main/.tmux.conf ~/.tmux.conf
 

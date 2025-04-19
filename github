@@ -1,0 +1,2 @@
+git 输入的用户名和密码会被写入
+git config --global credential.helper store

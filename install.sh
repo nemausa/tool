@@ -22,6 +22,7 @@ sudo apt install xsel  xclip
 sudo apt install -y tmux
 wget https://raw.githubusercontent.com/nemausa/tool/refs/heads/main/.tmux.conf ~/.tmux.conf
 
+rm -rf ~/.oh-my-zsh
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 git clone https://github.com/zsh-users/zsh-autosuggestions.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
@@ -46,4 +47,4 @@ sudo apt-get install -y neovim
 nvim --version
 
 rm -rf ~/.config/nvim
-git clone https://github.com/nemausa/starter.git ~/.config/nvim && nvim
+git clone https://github.com/nemausa/nvimrc.git ~/.config/nvim && nvim

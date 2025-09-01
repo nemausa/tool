@@ -1,16 +1,16 @@
-# Git Configuration and Repository Cleanup
+# Git 配置与仓库清理
 
-## 1. Store Credentials Permanently
-By default, Git will write entered usernames and passwords to disk:
+## 1. 永久保存凭证
+默认情况下，Git 会把输入的用户名和密码写入磁盘：
 ```bash
 git config --global credential.helper store
 ```
 
 ---
 
-## 2. Remove Files Larger Than 50 MB
+## 2. 删除大于 50 MB 的文件
 
-1. Update package lists and install dependencies:
+1. 更新软件包并安装依赖：
 
    ```bash
    sudo apt update
@@ -19,12 +19,12 @@ git config --global credential.helper store
    sudo apt install -y python3-pip
    pip3 install --user git-filter-repo
    ```
-2. Make sure `~/.local/bin` is in your PATH:
+2. 确保 `~/.local/bin` 已经在 PATH 中：
 
    ```bash
    export PATH=$PATH:$HOME/.local/bin
    ```
-3. Strip out all blobs over 50 MB:
+3. 删除所有超过 50 MB 的大文件：
 
    ```bash
    git filter-repo --strip-blobs-bigger-than 50M --force
@@ -32,9 +32,9 @@ git config --global credential.helper store
 
 ---
 
-## 3. Keep Non-ASCII Filenames Readable
+## 3. 保持非 ASCII 文件名可读
 
-By default Git escapes non-ASCII filenames as `\uXXXX`. To disable this:
+默认情况下，Git 会把非 ASCII 文件名转义为 `\uXXXX`。可以通过以下命令关闭：
 
 ```bash
 git config --system core.quotepath false
@@ -42,9 +42,9 @@ git config --system core.quotepath false
 
 ---
 
-## 4. Use UTF-8 for Commit Messages & Logs
+## 4. 使用 UTF-8 编码提交信息和日志
 
-Ensure Git inputs/outputs use UTF-8:
+确保 Git 输入/输出使用 UTF-8：
 
 ```bash
 git config --global i18n.commitEncoding utf-8
@@ -53,15 +53,15 @@ git config --global i18n.logOutputEncoding utf-8
 
 ---
 
-## 5. Useful Git Queries
+## 5. 常用 Git 查询
 
-* **Search commits by author**
+* **按作者搜索提交**
 
   ```bash
   git log --all --author="xxx"
   ```
 
-* **Find branches containing a given commit**
+* **查找包含某个提交的分支**
 
   ```bash
   git branch --contains <commit-id>
@@ -69,28 +69,28 @@ git config --global i18n.logOutputEncoding utf-8
 
 ---
 
-## 6. Search Commits by Author (Including Remote Branches)
+## 6. 在远程分支中按作者搜索提交
 
-1. Fetch all remote branches:
+1. 抓取所有远程分支：
 
    ```bash
    git fetch --all
    ```
 
-2. Search across all remotes for a specific author:
+2. 在所有远程分支中搜索某个作者的提交：
 
    ```bash
-   git log --remotes --author="username"
+   git log --remotes --author="用户名"
    ```
 
-3. For concise view (commit hash + message):
+3. 精简输出（仅显示提交哈希和信息）：
 
    ```bash
-   git log --remotes --author="username" --oneline
+   git log --remotes --author="用户名" --oneline
    ```
 
-4. Search in a specific remote branch:
+4. 仅查看某个远程分支的提交：
 
    ```bash
-   git log origin/dev --author="username" --oneline
+   git log origin/dev --author="用户名" --oneline
    ```

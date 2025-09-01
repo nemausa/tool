@@ -1,13 +1,10 @@
-Here’s your Git tips formatted in Markdown:
-
-````markdown
 # Git Configuration and Repository Cleanup
 
 ## 1. Store Credentials Permanently
 By default, Git will write entered usernames and passwords to disk:
 ```bash
 git config --global credential.helper store
-````
+```
 
 ---
 
@@ -70,7 +67,30 @@ git config --global i18n.logOutputEncoding utf-8
   git branch --contains <commit-id>
   ```
 
-```
+---
 
-Feel free to adjust any section as needed!
-```
+## 6. Search Commits by Author (Including Remote Branches)
+
+1. Fetch all remote branches:
+
+   ```bash
+   git fetch --all
+   ```
+
+2. Search across all remotes for a specific author:
+
+   ```bash
+   git log --remotes --author="username"
+   ```
+
+3. For concise view (commit hash + message):
+
+   ```bash
+   git log --remotes --author="username" --oneline
+   ```
+
+4. Search in a specific remote branch:
+
+   ```bash
+   git log origin/dev --author="username" --oneline
+   ```

@@ -47,6 +47,7 @@ git config --system core.quotepath false
 确保 Git 输入/输出使用 UTF-8：
 
 ```bash
+export LESSCHARSET=utf-8
 git config --global i18n.commitEncoding utf-8
 git config --global i18n.logOutputEncoding utf-8
 ```

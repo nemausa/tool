@@ -8,3 +8,8 @@ npm -v
 
 sudo apt install clangd
 git clone git@github.com:Nemausa/neovim-config.git ~/.config/nvim && nvim
+
+
+TSInstall all
+CocInstall coc-clangd
+CocInstall coc-snippets

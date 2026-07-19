@@ -1,0 +1,6 @@
+# Clean Virtual Machine
+sudo dd if=/dev/zero of=/zero.fill bs=1M
+sync
+sudo rm -f /zero.fill
+
+vmware-vdiskmanager.exe -k /path/to/disk.vmdk

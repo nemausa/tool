@@ -1,0 +1,150 @@
+/* Firefox Chrome-like UI */
+
+/* 全局颜色，偏 Chrome 默认浅色风格 */
+:root {
+  --toolbar-bgcolor: #f8fafd !important;
+  --toolbar-color: #202124 !important;
+  --lwt-accent-color: #f8fafd !important;
+  --lwt-text-color: #202124 !important;
+  --tab-selected-bgcolor: #ffffff !important;
+  --urlbar-box-bgcolor: #ffffff !important;
+  --urlbar-box-text-color: #202124 !important;
+}
+
+/* 顶部工具栏背景 */
+#navigator-toolbox {
+  background: #f8fafd !important;
+  border-bottom: 1px solid #dadce0 !important;
+}
+
+/* 标签栏高度接近 Chrome */
+#TabsToolbar {
+  min-height: 36px !important;
+  background: #f8fafd !important;
+}
+
+/* 标签页整体尺寸 */
+.tabbrowser-tab {
+  min-height: 34px !important;
+  padding-inline: 1px !important;
+}
+
+/* Chrome 风格圆角标签 */
+.tabbrowser-tab .tab-background {
+  border-radius: 10px 10px 0 0 !important;
+  margin: 4px 1px 0 1px !important;
+  min-height: 30px !important;
+  background: transparent !important;
+}
+
+/* 当前选中标签：白底 */
+.tabbrowser-tab[selected] .tab-background {
+  background: #ffffff !important;
+  box-shadow: none !important;
+}
+
+/* 非选中标签 hover */
+.tabbrowser-tab:not([selected]):hover .tab-background {
+  background: #e9eef6 !important;
+}
+
+/* 标签文字颜色 */
+.tab-label {
+  color: #202124 !important;
+}
+
+/* 关闭按钮更像 Chrome，hover 时显示 */
+.tabbrowser-tab:not([pinned]) .tab-close-button {
+  border-radius: 50% !important;
+}
+
+/* 导航栏高度 */
+#nav-bar {
+  min-height: 42px !important;
+  padding: 3px 8px !important;
+  background: #ffffff !important;
+}
+
+/* 地址栏 Chrome 风格 */
+#urlbar {
+  min-height: 34px !important;
+}
+
+#urlbar-background {
+  border-radius: 18px !important;
+  background: #f1f3f4 !important;
+  border: 1px solid transparent !important;
+  box-shadow: none !important;
+}
+
+/* 地址栏 hover */
+#urlbar:hover #urlbar-background {
+  background: #e8eaed !important;
+}
+
+/* 地址栏聚焦 */
+#urlbar[focused="true"] #urlbar-background {
+  background: #ffffff !important;
+  border: 1px solid #dfe1e5 !important;
+  box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28) !important;
+}
+
+/* 地址栏文字 */
+#urlbar-input {
+  color: #202124 !important;
+}
+
+/* 工具栏按钮圆形 hover，接近 Chrome */
+.toolbarbutton-1 > .toolbarbutton-icon,
+.toolbarbutton-1 > .toolbarbutton-badge-stack {
+  border-radius: 50% !important;
+}
+
+.toolbarbutton-1:hover > .toolbarbutton-icon,
+.toolbarbutton-1:hover > .toolbarbutton-badge-stack {
+  background-color: #f1f3f4 !important;
+}
+
+/* 隐藏 Firefox View 按钮 */
+#firefox-view-button {
+  display: none !important;
+}
+
+/* 隐藏标题栏两侧多余空白 */
+.titlebar-spacer {
+  display: none !important;
+}
+
+/* 隐藏所有标签页按钮，Chrome 默认没有这个明显按钮 */
+#alltabs-button {
+  display: none !important;
+}
+
+/* 隐藏 Pocket 按钮 */
+#save-to-pocket-button {
+  display: none !important;
+}
+
+/* 书签工具栏更干净 */
+#PersonalToolbar {
+  background: #ffffff !important;
+  border-bottom: 1px solid #dadce0 !important;
+}
+
+/* 书签栏 Chrome-like */
+#PersonalToolbar {
+  min-height: 28px !important;
+  max-height: 28px !important;
+  padding: 0 6px !important;
+  background: #ffffff !important;
+}
+
+#PlacesToolbarItems > .bookmark-item {
+  padding: 3px 6px !important;
+  border-radius: 4px !important;
+  font-size: 12px !important;
+}
+
+#PlacesToolbarItems > .bookmark-item:hover {
+  background: #f1f3f4 !important;
+}

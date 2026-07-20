@@ -61,8 +61,11 @@ fi
 
 cat >> "$temporary_file" <<EOF
 $start_marker
+alias tw='$launcher NL031'
 alias t26='$launcher NL026'
 alias t31='$launcher NL031'
+alias t26-reset='$launcher NL026 --reset'
+alias t31-reset='$launcher NL031 --reset'
 $end_marker
 EOF
 
@@ -71,5 +74,5 @@ mv -- "$temporary_file" "$zshrc_path"
 trap - EXIT
 chmod u+x -- "$launcher"
 
-printf '[install-tmux] Installed t26 and t31 in %s\n' "$zshrc_path"
+printf '[install-tmux] Installed tw, t26, t31, t26-reset, and t31-reset in %s\n' "$zshrc_path"
 printf '[install-tmux] Run: source %q\n' "$zshrc_path"

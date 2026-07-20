@@ -5,13 +5,14 @@ set -euo pipefail
 usage() {
     cat <<'EOF'
 Usage:
-  tmux-session.sh NL026 [--reset] [--yes]
-  tmux-session.sh NL031 [--reset] [--yes]
+  tmux-session.sh WORKSPACE [--reset] [--yes]
 
 Options:
   --reset  Recreate an existing session after confirmation.
   --yes    Skip the reset confirmation.
   -h, --help
+
+Workspace definitions are loaded from tmux-workspaces/ next to this script.
 EOF
 }
 
@@ -20,16 +21,15 @@ die() {
     exit 1
 }
 
+script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+config_dir="${TOOL_TMUX_CONFIG_DIR:-${script_dir}/tmux-workspaces}"
+
 profile=""
 reset_session=0
 assume_yes=0
 
 while (($# > 0)); do
     case "$1" in
-        NL026|NL031)
-            [[ -z "$profile" ]] || die "Only one profile may be selected."
-            profile="$1"
-            ;;
         --reset)
             reset_session=1
             ;;
@@ -40,9 +40,14 @@ while (($# > 0)); do
             usage
             exit 0
             ;;
-        *)
+        -*)
             usage >&2
             die "Unknown argument: $1"
+            ;;
+        *)
+            [[ -z "$profile" ]] || die "Only one profile may be selected."
+            [[ "$1" =~ ^[[:alnum:]][[:alnum:]_.-]*$ ]] || die "Invalid workspace name: $1"
+            profile="$1"
             ;;
     esac
     shift
@@ -50,20 +55,11 @@ done
 
 [[ -n "$profile" ]] || {
     usage >&2
-    die "Select NL026 or NL031."
+    die "Select a workspace."
 }
 
-case "$profile" in
-    NL026)
-        project_dir="${HOME}/Documents/src/NL026"
-        ;;
-    NL031)
-        project_dir="${HOME}/Documents/src/ac_lvgl"
-        ;;
-esac
-
 session_name="$profile"
-docs_dir="${HOME}/Documents/docs/AnyCubic"
+config_path="${config_dir}/${profile}.conf"
 codex_command="${TOOL_TMUX_CODEX_COMMAND:-codex}"
 claude_command="${TOOL_TMUX_CLAUDE_COMMAND:-claude}"
 
@@ -77,7 +73,7 @@ tmux_cmd() {
 }
 
 session_exists() {
-    tmux_cmd has-session -t "$session_name" 2>/dev/null
+    tmux_cmd has-session -t "=${session_name}" 2>/dev/null
 }
 
 attach_or_switch() {
@@ -86,9 +82,9 @@ attach_or_switch() {
     fi
 
     if [[ -n "${TMUX:-}" && -z "${TOOL_TMUX_SOCKET:-}" ]]; then
-        tmux_cmd switch-client -t "$session_name"
+        tmux_cmd switch-client -t "=${session_name}"
     else
-        exec "${tmux_args[@]}" attach-session -t "$session_name"
+        exec "${tmux_args[@]}" attach-session -t "=${session_name}"
     fi
 }
 
@@ -98,14 +94,67 @@ if session_exists && ((reset_session == 0)); then
 fi
 
 command -v tmux >/dev/null 2>&1 || die "tmux is not installed."
-[[ -d "$project_dir" ]] || die "Project directory does not exist: $project_dir"
-[[ -d "$docs_dir" ]] || die "Documentation directory does not exist: $docs_dir"
+[[ -f "$config_path" ]] || die "Workspace config not found: $config_path"
 
-codex_executable="${codex_command%%[[:space:]]*}"
-claude_executable="${claude_command%%[[:space:]]*}"
-command -v "$codex_executable" >/dev/null 2>&1 || die "Command not found: $codex_executable"
-command -v "$claude_executable" >/dev/null 2>&1 || die "Command not found: $claude_executable"
 zsh_path="$(command -v zsh)" || die "zsh is not installed."
+
+trim() {
+    local value="$1"
+    value="${value#"${value%%[![:space:]]*}"}"
+    value="${value%"${value##*[![:space:]]}"}"
+    printf '%s' "$value"
+}
+
+window_names=()
+window_directories=()
+window_commands=()
+line_number=0
+
+while IFS= read -r config_line || [[ -n "$config_line" ]]; do
+    ((line_number += 1))
+    config_line="$(trim "$config_line")"
+    [[ -z "$config_line" || "$config_line" == \#* ]] && continue
+
+    IFS='|' read -r window_name directory command <<< "$config_line"
+    window_name="$(trim "$window_name")"
+    directory="$(trim "${directory:-}")"
+    command="$(trim "${command:-}")"
+
+    [[ -n "$window_name" ]] || die "$config_path:$line_number: window name is empty."
+    [[ -n "$directory" ]] || die "$config_path:$line_number: working directory is empty."
+
+    case "$directory" in
+        '~')
+            directory="$HOME"
+            ;;
+        '~/'*)
+            directory="${HOME}/${directory:2}"
+            ;;
+    esac
+    [[ -d "$directory" ]] || die "$config_path:$line_number: directory does not exist: $directory"
+
+    case "$command" in
+        '@codex')
+            command="$codex_command"
+            executable="${command%%[[:space:]]*}"
+            command -v "$executable" >/dev/null 2>&1 || die "Command not found: $executable"
+            ;;
+        '@claude')
+            command="$claude_command"
+            executable="${command%%[[:space:]]*}"
+            command -v "$executable" >/dev/null 2>&1 || die "Command not found: $executable"
+            ;;
+        @*)
+            die "$config_path:$line_number: unknown command placeholder: $command"
+            ;;
+    esac
+
+    window_names+=("$window_name")
+    window_directories+=("$directory")
+    window_commands+=("$command")
+done < "$config_path"
+
+((${#window_names[@]} > 0)) || die "Workspace config contains no windows: $config_path"
 
 persistent_zsh_command() {
     local command_line="$1"
@@ -137,35 +186,46 @@ if session_exists; then
         esac
     fi
 
-    tmux_cmd kill-session -t "$session_name"
+    tmux_cmd kill-session -t "=${session_name}"
 fi
 
 session_created=0
 cleanup_partial_session() {
     status=$?
     if ((session_created == 1)); then
-        tmux_cmd kill-session -t "$session_name" >/dev/null 2>&1 || true
+        tmux_cmd kill-session -t "=${session_name}" >/dev/null 2>&1 || true
         session_created=0
     fi
     return "$status"
 }
 trap cleanup_partial_session EXIT
 
-tmux_cmd new-session -d -s "$session_name" -n Codex -c "$project_dir" "$(persistent_zsh_command "$codex_command")"
+if [[ -n "${window_commands[0]}" ]]; then
+    tmux_cmd new-session -d -s "$session_name" -n "${window_names[0]}" -c "${window_directories[0]}" \
+        "$(persistent_zsh_command "${window_commands[0]}")"
+else
+    tmux_cmd new-session -d -s "$session_name" -n "${window_names[0]}" -c "${window_directories[0]}"
+fi
 session_created=1
 
-first_window_index="$(tmux_cmd display-message -p -t "${session_name}:Codex" '#{window_index}')"
+first_window_index="$(tmux_cmd display-message -p -t "=${session_name}:" '#{window_index}')"
 [[ "$first_window_index" == "1" ]] || die "tmux base-index must be 1 (got $first_window_index)."
 
-tmux_cmd new-window -d -t "${session_name}:2" -n Claude -c "$project_dir" "$(persistent_zsh_command "$claude_command")"
-tmux_cmd new-window -d -t "${session_name}:3" -n Run -c "$project_dir"
-tmux_cmd new-window -d -t "${session_name}:4" -n AnyCubic -c "$docs_dir"
-tmux_cmd new-window -d -t "${session_name}:5" -n Shell-1 -c "$project_dir"
+for ((i = 1; i < ${#window_names[@]}; i++)); do
+    window_index=$((i + 1))
+    if [[ -n "${window_commands[i]}" ]]; then
+        tmux_cmd new-window -d -t "=${session_name}:${window_index}" -n "${window_names[i]}" \
+            -c "${window_directories[i]}" "$(persistent_zsh_command "${window_commands[i]}")"
+    else
+        tmux_cmd new-window -d -t "=${session_name}:${window_index}" -n "${window_names[i]}" \
+            -c "${window_directories[i]}"
+    fi
+done
 
-tmux_cmd set-window-option -t "$session_name" automatic-rename off >/dev/null
-tmux_cmd set-window-option -t "$session_name" allow-rename off >/dev/null
+tmux_cmd set-window-option -t "=${session_name}:" automatic-rename off >/dev/null
+tmux_cmd set-window-option -t "=${session_name}:" allow-rename off >/dev/null
 
-tmux_cmd select-window -t "${session_name}:1"
+tmux_cmd select-window -t "=${session_name}:1"
 
 session_created=0
 trap - EXIT

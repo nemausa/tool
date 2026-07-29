@@ -9,10 +9,31 @@ die() {
 
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 launcher="${script_dir}/tmux-session.sh"
+tmux_conf_src="${script_dir}/.tmux.conf"
+tmux_conf_dest="${TOOL_TMUX_CONF:-${HOME}/.tmux.conf}"
 zshrc_path="${TOOL_TMUX_ZSHRC:-${HOME}/.zshrc}"
 
 [[ -f "$launcher" ]] || die "Launcher not found: $launcher"
 [[ "$launcher" != *"'"* ]] || die "Launcher path may not contain a single quote."
+[[ -f "$tmux_conf_src" ]] || die "tmux config not found: $tmux_conf_src"
+
+if [[ -L "$tmux_conf_dest" ]]; then
+    current_target="$(readlink -- "$tmux_conf_dest")"
+    if [[ "$current_target" != "$tmux_conf_src" ]]; then
+        ln -sf -- "$tmux_conf_src" "$tmux_conf_dest"
+        printf '[install-tmux] Relinked %s -> %s\n' "$tmux_conf_dest" "$tmux_conf_src"
+    fi
+elif [[ -e "$tmux_conf_dest" ]]; then
+    tmux_conf_backup="${tmux_conf_dest}.tool-tmux.bak"
+    if [[ ! -e "$tmux_conf_backup" ]]; then
+        cp -p -- "$tmux_conf_dest" "$tmux_conf_backup"
+    fi
+    ln -sf -- "$tmux_conf_src" "$tmux_conf_dest"
+    printf '[install-tmux] Backed up existing %s to %s and linked to %s\n' "$tmux_conf_dest" "$tmux_conf_backup" "$tmux_conf_src"
+else
+    ln -s -- "$tmux_conf_src" "$tmux_conf_dest"
+    printf '[install-tmux] Linked %s -> %s\n' "$tmux_conf_dest" "$tmux_conf_src"
+fi
 
 if [[ -L "$zshrc_path" ]]; then
     zshrc_path="$(readlink -f -- "$zshrc_path")"

@@ -85,6 +85,9 @@ $start_marker
 alias tw='$launcher NL031'
 alias t26='$launcher NL026'
 alias t31='$launcher NL031'
+alias t31-gui='$launcher NL031-PhotonGui'
+alias t31-doc='$launcher NL031-PhotonGui-doc'
+alias t31-resin='$launcher NL031-PhotonGui-Resin'
 alias t26-reset='$launcher NL026 --reset'
 alias t31-reset='$launcher NL031 --reset'
 $end_marker
@@ -95,5 +98,5 @@ mv -- "$temporary_file" "$zshrc_path"
 trap - EXIT
 chmod u+x -- "$launcher"
 
-printf '[install-tmux] Installed tw, t26, t31, t26-reset, and t31-reset in %s\n' "$zshrc_path"
+printf '[install-tmux] Installed tw, t26, t31, t31-gui, t31-doc, t31-resin, t26-reset, and t31-reset in %s\n' "$zshrc_path"
 printf '[install-tmux] Run: source %q\n' "$zshrc_path"
